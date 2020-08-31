@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
 import morgan from 'morgan';
-import { notFound, responseHandler, apiCheck } from './middleware';
+import { notFound, responseHandler, healthCheck } from './middleware';
 
 export const createExpressApp = () => {
     const app = express();
@@ -25,7 +25,7 @@ export const createExpressApp = () => {
     app.use(express.urlencoded({ extended: true }));
 
     // check route
-    app.get('/api', apiCheck);
+    app.get('/healthCheck', healthCheck);
 
     // not found handler
     app.use(notFound);
