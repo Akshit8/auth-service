@@ -4,6 +4,7 @@ import cors from 'cors';
 import compression from 'compression';
 import morgan from 'morgan';
 import { notFound, responseHandler, healthCheck } from './middleware';
+import { LoggerStream } from './logger/winston';
 
 export const createExpressApp = () => {
     const app = express();
@@ -17,7 +18,7 @@ export const createExpressApp = () => {
     app.use(cors());
 
     // for http logging
-    app.use(morgan('dev'));
+    app.use(morgan('combined', { stream: new LoggerStream() }));
 
     // parsing json responses
     app.use(express.json());
