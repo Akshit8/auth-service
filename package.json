@@ -16,7 +16,7 @@
     "nodejs",
     "auth"
   ],
-  "author": "HelpNow",
+  "author": "Akshit Sadana",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/helpnow24x7/auth-service/issues"
