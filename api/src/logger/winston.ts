@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import { createLogger, format, transports, stream } from 'winston';
-import { NODE_ENV } from '../config';
 
 const { combine, timestamp, printf, prettyPrint } = format;
 
@@ -44,7 +43,7 @@ export class LoggerStream {
     If we're not in production then log to the `console` with the format:
     `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 */
-if (NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
     logger.add(
         new transports.Console({
             format: format.simple()
