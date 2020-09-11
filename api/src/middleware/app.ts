@@ -11,7 +11,7 @@ export const healthCheck = (req: Request, res: Response, next: NextFunction) => 
     next(new HttpResponse(statusCode.ok, `API started at ${time.toString()}`));
 };
 
-// error catch handler
+// try-catch handler
 export const catchAsync = (handler: RequestHandler) => (...args: [Request, Response, NextFunction]) =>
     handler(...args).catch(args[2]);
 
