@@ -5,6 +5,7 @@ import compression from 'compression';
 import morgan from 'morgan';
 import { notFound, responseHandler, healthCheck } from './middleware';
 import { LoggerStream } from './logger/winston';
+import router from './routes';
 
 export const createExpressApp = () => {
     const app = express();
@@ -25,8 +26,11 @@ export const createExpressApp = () => {
     // for parsing application/xwww-form-urlencoded
     app.use(express.urlencoded({ extended: true }));
 
-    // check route
-    app.get('/healthCheck', healthCheck);
+    // healthCheck route
+    app.get('/api/v1/auth/healthCheck', healthCheck);
+
+    // app router
+    app.use('/api/vi/auth', router);
 
     // not found handler
     app.use(notFound);
