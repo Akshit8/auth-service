@@ -15,7 +15,7 @@
         }
     },
     {
-        "files": ["*.json"],
+        "files": ["*.json, /**/*.json"],
         "options": {
             "tabWidth": 2,
             "parser": "json",
