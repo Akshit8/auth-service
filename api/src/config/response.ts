@@ -22,5 +22,6 @@ export const message: { [index: string]: string } = {
     roleNotExist: 'Permission not exists',
     userAlreadyExistsName: 'User already exists with that name',
     userAlreadyExistsNo: 'User already exists with that phone-number',
-    userAlreadyExistsID: 'User already exists with that id'
+    userAlreadyExistsID: 'User already exists with that id',
+    userNotExist: 'User not exist'
 };
