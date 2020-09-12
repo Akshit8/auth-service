@@ -3,7 +3,7 @@ import { message, statusCode } from '../config';
 import { HttpError } from '../httpError';
 import { HttpResponse } from '../httpResponse';
 import { catchAsync } from '../middleware';
-import { Permission } from '../models';
+import { Permission, PermissionDocument } from '../models';
 
 export const addPermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { permissionName, description } = req.body;
@@ -25,7 +25,18 @@ export const getPermissionController = catchAsync(async (req: Request, res: Resp
     next(new HttpResponse(statusCode.ok, permission));
 });
 
-export const getAllPermissionsController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+export const getAllPermissionsController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { skip, limit } = req.query;
+    const allPermissions: PermissionDocument[] = await Permission.find(
+        {},
+        {},
+        {
+            skip: +skip!,
+            limit: +limit!
+        }
+    ).sort('createdAt');
+    next(new HttpResponse(statusCode.ok, allPermissions));
+});
 
 export const updatePermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
 
