@@ -19,5 +19,8 @@ export const message: { [index: string]: string } = {
     permissionAlreadyExists: 'Permission already exists',
     permissionNotExist: 'Permission not exists',
     roleAlreadyExists: 'Permission already exists',
-    roleNotExist: 'Permission not exists'
+    roleNotExist: 'Permission not exists',
+    userAlreadyExistsName: 'User already exists with that name',
+    userAlreadyExistsNo: 'User already exists with that phone-number',
+    userAlreadyExistsID: 'User already exists with that id'
 };
