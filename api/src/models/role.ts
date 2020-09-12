@@ -22,4 +22,14 @@ const roleSchema = new Schema(
     }
 );
 
+roleSchema.methods.toJSON = function () {
+    const role = this.toObject();
+
+    delete role.__v;
+    delete role.createdAt;
+    delete role.updatedAt;
+
+    return role;
+};
+
 export const Role = model<RoleDocument>('roles', roleSchema);

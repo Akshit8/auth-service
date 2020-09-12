@@ -10,9 +10,9 @@ import {
 const router: Router = Router();
 
 router.post('/add', addRoleController);
-router.get('/get', getRoleController);
+router.get('/get/:roleID', getRoleController);
 router.get('/allRoles', getAllRolesController);
-router.patch('/update', updateRoleController);
-router.delete('/delete', deleteRoleController);
+router.patch('/update/:roleID', updateRoleController);
+router.delete('/delete/:roleID', deleteRoleController);
 
 export default router;
