@@ -30,7 +30,7 @@ export const createExpressApp = () => {
     app.get('/api/v1/auth/healthCheck', healthCheck);
 
     // app router
-    app.use('/api/vi/auth', router);
+    app.use('/api/v1/auth', router);
 
     // not found handler
     app.use(notFound);

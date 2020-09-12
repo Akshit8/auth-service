@@ -15,5 +15,7 @@ export const message: { [index: string]: string } = {
     uploadError: 'Error occured while uploading file',
     authHeaderRequired: 'Authorization header required',
     serviceNameRequired: 'Service name required',
-    invalidService: 'Invalid service name'
+    invalidService: 'Invalid service name',
+    permissionAlreadyExists: 'Permission already exists',
+    permissionNotExist: 'Permission not exists'
 };

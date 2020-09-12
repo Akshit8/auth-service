@@ -22,4 +22,14 @@ const permissionSchema = new Schema(
     }
 );
 
+permissionSchema.methods.toJSON = function () {
+    const permission = this.toObject();
+
+    delete permission.__v;
+    delete permission.createdAt;
+    delete permission.updatedAt;
+
+    return permission;
+};
+
 export const Permission = model<PermissionDocument>('permissions', permissionSchema);
