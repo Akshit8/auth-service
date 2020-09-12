@@ -3,7 +3,7 @@ import user from './user';
 import role from './role';
 import permission from './permission';
 
-const router = Router();
+const router: Router = Router();
 
 router.use('/user', user);
 router.use('/role', role);
