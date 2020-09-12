@@ -40,4 +40,12 @@ export const getAllPermissionsController = catchAsync(async (req: Request, res: 
 
 export const updatePermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
 
-export const deletePermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+export const deletePermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { permissionID } = req.params;
+    const permission = await Permission.findById(permissionID);
+    if (!permission) {
+        throw new HttpError(statusCode.badRequest, message.permissionNotExist);
+    }
+    await permission.remove();
+    next(new HttpResponse(statusCode.ok, null));
+});
