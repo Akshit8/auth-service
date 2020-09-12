@@ -46,7 +46,22 @@ export const getAllUsersController = catchAsync(async (req: Request, res: Respon
     next(new HttpResponse(statusCode.ok, allUsers));
 });
 
-export const updateUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+export const updateUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { userID } = req.params;
+    const updates = Object.keys(req.body);
+    const validUpdates: string[] = ['userName', 'phoneNumber'];
+    const isValidUpdate = updates.every((update: string) => {
+        return validUpdates.includes(update);
+    });
+    if (!isValidUpdate) {
+        throw new HttpError(statusCode.forbidden, message.invalidParameters);
+    }
+    // const user: UserDocument = await User.findById(userID);
+    // updates.forEach((update: string) => {
+    //     user[update] = req.body[update];
+    // });
+    next();
+});
 
 export const deleteUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userID } = req.params;
