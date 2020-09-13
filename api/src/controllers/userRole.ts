@@ -41,7 +41,7 @@ export const updateUserRolesController = catchAsync(async (req: Request, res: Re
     }
     const newUserRole = new UserRoles({ userID, roleID });
     await newUserRole.save();
-    next(new HttpResponse(statusCode.created, null));
+    next(new HttpResponse(statusCode.ok, null));
 });
 
 export const deleteUserRolesController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -60,5 +60,5 @@ export const deleteUserRolesController = catchAsync(async (req: Request, res: Re
     if (userRole) {
         await userRole.remove();
     }
-    next(new HttpResponse(statusCode.created, null));
+    next(new HttpResponse(statusCode.ok, null));
 });
