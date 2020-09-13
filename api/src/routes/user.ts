@@ -3,9 +3,11 @@ import {
     addUserController,
     addUserRolesController,
     deleteUserController,
+    deleteUserRolesController,
     getAllUsersController,
     getUserController,
-    updateUserController
+    updateUserController,
+    updateUserRolesController
 } from '../controllers';
 
 const router: Router = Router();
@@ -17,8 +19,8 @@ router.patch('/update/:userID', updateUserController);
 router.delete('/delete/:userID', deleteUserController);
 
 router.post('/addRoles/:userID', addUserRolesController);
-router.patch('/updateRoles/:userID');
-router.delete('/deleteRoles/:userID');
+router.patch('/updateRoles/:userID', updateUserRolesController);
+router.delete('/deleteRoles/:userID', deleteUserRolesController);
 
 // roles info will be dispayed with above get routes
 

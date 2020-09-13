@@ -44,7 +44,7 @@ export const deleteRoleController = catchAsync(async (req: Request, res: Respons
     const { roleID } = req.params;
     const role = await Role.findById(roleID);
     if (!role) {
-        throw new HttpError(statusCode.badRequest, message.roleNotExits);
+        throw new HttpError(statusCode.badRequest, message.roleNotExist);
     }
     await role.remove();
     next(new HttpResponse(statusCode.ok, null));
