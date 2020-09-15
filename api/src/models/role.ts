@@ -15,7 +15,13 @@ const roleSchema = new Schema(
         description: {
             type: String,
             required: true
-        }
+        },
+        permissions: [{
+            permission: {
+                type: String,
+                required: true
+            }
+        }]
     },
     {
         timestamps: true
