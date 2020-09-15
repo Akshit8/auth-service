@@ -74,9 +74,24 @@ export const addRolePermissionController = catchAsync(async (req: Request, res: 
             throw new HttpError(statusCode.badRequest, message.permissionAlreadyExists);
         }
     });
-    role.permissions.concat(permissions);
+    role.permissions = role.permissions.concat(permissions);
     await role.save();
     next(new HttpResponse(statusCode.ok, role));
 });
 
-export const deleteRolePermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+export const deleteRolePermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { roleID } = req.params;
+    const { permissions } = req.body;
+    const role = await Role.findById(roleID);
+    if (!role) {
+        throw new HttpError(statusCode.badRequest, message.roleNotExist);
+    }
+    permissions.forEach((permission: string) => {
+        if (!role.permissions.includes(permission)) {
+            throw new HttpError(statusCode.badRequest, 'Permission do not exist');
+        }
+    });
+    role.permissions = role.permissions.filter((permission: string) => {
+        return !permissions.includes(permission);
+    });
+});
