@@ -44,7 +44,28 @@ export const getAllRolesController = catchAsync(async (req: Request, res: Respon
     next(new HttpResponse(statusCode.ok, allRoles));
 });
 
-export const updateRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+export const updateRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { roleID } = req.params;
+    const { description, permissions } = req.body;
+    const role = await Role.findById(roleID);
+    if (!role) {
+        throw new HttpError(statusCode.badRequest, message.roleNotExist);
+    }
+    if (description) {
+        role.description = description;
+    }
+    if (permissions) {
+        for (let i = 0; i < permissions.length; i++) {
+            const permission = await Permission.findOne({ permissionName: permissions[i] });
+            if (!permission) {
+                throw new HttpError(statusCode.badRequest, message.permissionNotExist);
+            }
+        }
+        role.permissions = permissions;
+    }
+    role.save();
+    next(new HttpResponse(statusCode.ok, role));
+});
 
 export const deleteRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { roleID } = req.params;
@@ -94,4 +115,6 @@ export const deleteRolePermissionController = catchAsync(async (req: Request, re
     role.permissions = role.permissions.filter((permission: string) => {
         return !permissions.includes(permission);
     });
+    await role.save();
+    next(new HttpResponse(statusCode.ok, role));
 });
