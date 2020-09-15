@@ -1,13 +1,10 @@
 import { Router } from 'express';
 import {
     addUserController,
-    addUserRolesController,
     deleteUserController,
-    deleteUserRolesController,
     getAllUsersController,
     getUserController,
-    updateUserController,
-    updateUserRolesController
+    updateUserController
 } from '../controllers';
 
 const router: Router = Router();
@@ -18,10 +15,7 @@ router.get('/allUsers', getAllUsersController);
 router.patch('/update/:userID', updateUserController);
 router.delete('/delete/:userID', deleteUserController);
 
-router.post('/addRoles/:userID', addUserRolesController);
-router.patch('/updateRoles/:userID', updateUserRolesController);
-router.delete('/deleteRoles/:userID', deleteUserRolesController);
-
-// roles info will be dispayed with above get routes
+router.patch('/addRole/:userID');
+router.delete('/deleteRole/:userID');
 
 export default router;
