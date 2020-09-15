@@ -3,6 +3,7 @@ import { Schema, model, Document } from 'mongoose';
 export interface RoleDocument extends Document {
     roleName: string;
     description: string;
+    permissions: string[];
 }
 
 const roleSchema = new Schema(
@@ -16,12 +17,12 @@ const roleSchema = new Schema(
             type: String,
             required: true
         },
-        permissions: [{
-            permission: {
+        permissions: [
+            {
                 type: String,
                 required: true
             }
-        }]
+        ]
     },
     {
         timestamps: true
