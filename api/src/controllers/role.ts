@@ -41,7 +41,7 @@ export const getAllRolesController = catchAsync(async (req: Request, res: Respon
             limit: +limit!
         }
     ).sort('createdAt');
-    next(new HttpResponse(statusCode.ok, allRoles));
+    next(new HttpResponse(statusCode.ok, { roles: allRoles }));
 });
 
 export const updateRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {

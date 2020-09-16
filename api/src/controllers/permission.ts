@@ -29,13 +29,15 @@ export const getAllPermissionsController = catchAsync(async (req: Request, res: 
     const { skip, limit } = req.query;
     const allPermissions: PermissionDocument[] = await Permission.find(
         {},
-        {},
+        {
+            description: false
+        },
         {
             skip: +skip!,
             limit: +limit!
         }
     ).sort('createdAt');
-    next(new HttpResponse(statusCode.ok, allPermissions));
+    next(new HttpResponse(statusCode.ok, { permissions: allPermissions }));
 });
 
 export const updatePermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
@@ -44,7 +46,7 @@ export const deletePermissionController = catchAsync(async (req: Request, res: R
     const { permissionID } = req.params;
     const permission = await Permission.findById(permissionID);
     if (!permission) {
-        throw new HttpError(statusCode.badRequest, message.permissionNotExist);
+        throw new HttpError(statusCode.badRequest, message.permissionNotExists);
     }
     await permission.remove();
     next(new HttpResponse(statusCode.ok, null));
