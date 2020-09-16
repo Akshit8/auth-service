@@ -48,7 +48,7 @@ export const getAllUsersController = catchAsync(async (req: Request, res: Respon
 
 export const updateUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userID } = req.params;
-    const { userName, phoneNumber, rolesList } = req.body;
+    const { userName, phoneNumber, roles } = req.body;
     const user = await User.findById(userID);
     if (!user) {
         throw new HttpError(statusCode.badRequest, message.userNotExist);
@@ -67,14 +67,14 @@ export const updateUserController = catchAsync(async (req: Request, res: Respons
         }
         user.phoneNumber = phoneNumber;
     }
-    if (rolesList) {
-        for (let i = 0; i < rolesList.length; i++) {
-            const role = await Role.findOne({ roleName: rolesList[i] });
+    if (roles) {
+        for (let i = 0; i < roles.length; i++) {
+            const role = await Role.findOne({ roleName: roles[i] });
             if (!role) {
                 throw new HttpError(statusCode.badRequest, message.roleNotExist);
             }
         }
-        user.rolesList = rolesList;
+        user.roles = roles;
     }
     await user.save();
     next(new HttpResponse(statusCode.ok, user));
@@ -92,25 +92,42 @@ export const deleteUserController = catchAsync(async (req: Request, res: Respons
 
 export const addUserRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userID } = req.params;
-    const { rolesList } = req.body;
+    const { roles } = req.body;
     const user = await User.findById(userID);
     if (!user) {
         throw new HttpError(statusCode.badRequest, message.userNotExist);
     }
-    for (let i = 0; i < rolesList.length; i++) {
-        const role = await Role.findOne({ roleName: rolesList[i] });
+    for (let i = 0; i < roles.length; i++) {
+        const role = await Role.findOne({ roleName: roles[i] });
         if (!role) {
             throw new HttpError(statusCode.badRequest, message.roleNotExist);
         }
     }
-    rolesList.forEach((role: string) => {
-        if (user.rolesList.includes(role)) {
+    roles.forEach((role: string) => {
+        if (user.roles.includes(role)) {
             throw new HttpError(statusCode.badRequest, message.roleAlreadyExists);
         }
     });
-    user.rolesList = user.rolesList.concat(rolesList);
+    user.roles = user.roles.concat(roles);
     await user.save();
     next(new HttpResponse(statusCode.ok, user));
 });
 
-export const deleteUserRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+export const deleteUserRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { userID } = req.params;
+    const { roles } = req.body;
+    const user = await User.findById(userID);
+    if (!user) {
+        throw new HttpError(statusCode.badRequest, message.userNotExist);
+    }
+    roles.forEach((role: string) => {
+        if (!user.roles.includes(role)) {
+            throw new HttpError(statusCode.badRequest, message.roleNotExist);
+        }
+    });
+    user.roles = user.roles.filter((role: string) => {
+        return !roles.includes(role);
+    });
+    await user.save();
+    next(new HttpResponse(statusCode.ok, user));
+});
