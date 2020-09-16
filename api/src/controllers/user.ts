@@ -3,7 +3,7 @@ import { message, statusCode } from '../config';
 import { HttpError } from '../httpError';
 import { HttpResponse } from '../httpResponse';
 import { catchAsync } from '../middleware';
-import { User, UserDocument } from '../models';
+import { Role, User, UserDocument } from '../models';
 
 export const addUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userName, phoneNumber, serviceUserID } = req.body;
@@ -48,19 +48,36 @@ export const getAllUsersController = catchAsync(async (req: Request, res: Respon
 
 export const updateUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userID } = req.params;
-    const updates = Object.keys(req.body);
-    const validUpdates: string[] = ['userName', 'phoneNumber'];
-    const isValidUpdate = updates.every((update: string) => {
-        return validUpdates.includes(update);
-    });
-    if (!isValidUpdate) {
-        throw new HttpError(statusCode.forbidden, message.invalidParameters);
+    const { userName, phoneNumber, rolesList } = req.body;
+    const user = await User.findById(userID);
+    if (!user) {
+        throw new HttpError(statusCode.badRequest, message.userNotExist);
     }
-    // const user: UserDocument = await User.findById(userID);
-    // updates.forEach((update: string) => {
-    //     user[update] = req.body[update];
-    // });
-    next();
+    if (userName) {
+        const checkUserNameExist = await User.findOne({ userName });
+        if (checkUserNameExist) {
+            throw new HttpError(statusCode.badRequest, 'username already exists');
+        }
+        user.userName = userName;
+    }
+    if (phoneNumber) {
+        const checkPhoneNumberExist = await User.findOne({ userName });
+        if (checkPhoneNumberExist) {
+            throw new HttpError(statusCode.badRequest, 'phone number already exists');
+        }
+        user.phoneNumber = phoneNumber;
+    }
+    if (rolesList) {
+        for (let i = 0; i < rolesList.length; i++) {
+            const role = await Role.findOne({ roleName: rolesList[i] });
+            if (!role) {
+                throw new HttpError(statusCode.badRequest, message.roleNotExist);
+            }
+        }
+        user.rolesList = rolesList;
+    }
+    await user.save();
+    next(new HttpResponse(statusCode.ok, user));
 });
 
 export const deleteUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -72,3 +89,7 @@ export const deleteUserController = catchAsync(async (req: Request, res: Respons
     await user.remove();
     next(new HttpResponse(statusCode.ok, null));
 });
+
+export const addUserRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+
+export const deleteUserRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});

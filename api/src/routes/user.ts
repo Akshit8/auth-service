@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import {
     addUserController,
+    addUserRoleController,
     deleteUserController,
+    deleteUserRoleController,
     getAllUsersController,
     getUserController,
     updateUserController
@@ -15,7 +17,7 @@ router.get('/allUsers', getAllUsersController);
 router.patch('/update/:userID', updateUserController);
 router.delete('/delete/:userID', deleteUserController);
 
-router.patch('/addRole/:userID');
-router.delete('/deleteRole/:userID');
+router.patch('/addRole/:userID', addUserRoleController);
+router.delete('/deleteRole/:userID', deleteUserRoleController);
 
 export default router;

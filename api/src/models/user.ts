@@ -4,6 +4,7 @@ export interface UserDocument extends Document {
     userName: string;
     phoneNumber: string;
     serviceUserID: string;
+    rolesList: string[];
 }
 
 const userSchema = new Schema(
@@ -21,7 +22,13 @@ const userSchema = new Schema(
         serviceUserID: {
             type: String,
             required: true
-        }
+        },
+        rolesList: [
+            {
+                type: String,
+                required: true
+            }
+        ]
     },
     {
         timestamps: true

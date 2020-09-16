@@ -63,7 +63,7 @@ export const updateRoleController = catchAsync(async (req: Request, res: Respons
         }
         role.permissions = permissions;
     }
-    role.save();
+    await role.save();
     next(new HttpResponse(statusCode.ok, role));
 });
 
