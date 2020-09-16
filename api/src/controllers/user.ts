@@ -90,6 +90,27 @@ export const deleteUserController = catchAsync(async (req: Request, res: Respons
     next(new HttpResponse(statusCode.ok, null));
 });
 
-export const addUserRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+export const addUserRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { userID } = req.params;
+    const { rolesList } = req.body;
+    const user = await User.findById(userID);
+    if (!user) {
+        throw new HttpError(statusCode.badRequest, message.userNotExist);
+    }
+    for (let i = 0; i < rolesList.length; i++) {
+        const role = await Role.findOne({ roleName: rolesList[i] });
+        if (!role) {
+            throw new HttpError(statusCode.badRequest, message.roleNotExist);
+        }
+    }
+    rolesList.forEach((role: string) => {
+        if (user.rolesList.includes(role)) {
+            throw new HttpError(statusCode.badRequest, message.roleAlreadyExists);
+        }
+    });
+    user.rolesList = user.rolesList.concat(rolesList);
+    await user.save();
+    next(new HttpResponse(statusCode.ok, user));
+});
 
 export const deleteUserRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
