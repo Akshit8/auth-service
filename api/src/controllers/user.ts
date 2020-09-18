@@ -7,6 +7,7 @@ import { Role, User, UserDocument } from '../models';
 
 export const addUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userName, phoneNumber, serviceUserID } = req.body;
+    const roles = Array.from(new Set(req.body.roles as string[]));
     const userByName = await User.findOne({ userName });
     if (userByName) {
         throw new HttpError(statusCode.badRequest, message.userAlreadyExistsName);
@@ -19,7 +20,13 @@ export const addUserController = catchAsync(async (req: Request, res: Response, 
     if (userByID) {
         throw new HttpError(statusCode.badRequest, message.userAlreadyExistsID);
     }
-    const newUser = new User({ userName, phoneNumber, serviceUserID });
+    for (let i = 0; i < roles.length; i++) {
+        const role = await Role.findOne({ roleName: roles[i] });
+        if (!role) {
+            throw new HttpError(statusCode.badRequest, message.roleNotExist);
+        }
+    }
+    const newUser = new User({ userName, phoneNumber, serviceUserID, roles });
     await newUser.save();
     next(new HttpResponse(statusCode.created, null));
 });

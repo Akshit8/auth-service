@@ -6,7 +6,8 @@ import { catchAsync } from '../middleware';
 import { Permission, Role, RoleDocument } from '../models';
 
 export const addRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { roleName, description, permissions } = req.body;
+    const { roleName, description } = req.body;
+    const permissions = Array.from(new Set(req.body.permissions as string[]));
     const role = await Role.findOne({ roleName });
     if (role) {
         throw new HttpError(statusCode.badRequest, message.roleAlreadyExists);
@@ -35,7 +36,10 @@ export const getAllRolesController = catchAsync(async (req: Request, res: Respon
     const { skip, limit } = req.query;
     const allRoles: RoleDocument[] = await Role.find(
         {},
-        {},
+        {
+            description: false,
+            permissions: false
+        },
         {
             skip: +skip!,
             limit: +limit!
@@ -46,7 +50,8 @@ export const getAllRolesController = catchAsync(async (req: Request, res: Respon
 
 export const updateRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { roleID } = req.params;
-    const { description, permissions } = req.body;
+    const { description } = req.body;
+    const permissions = Array.from(new Set(req.body.permissions as string[]));
     const role = await Role.findById(roleID);
     if (!role) {
         throw new HttpError(statusCode.badRequest, message.roleNotExist);
@@ -79,7 +84,7 @@ export const deleteRoleController = catchAsync(async (req: Request, res: Respons
 
 export const addRolePermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { roleID } = req.params;
-    const { permissions } = req.body;
+    const permissions = Array.from(new Set(req.body.permissions as string[]));
     const role = await Role.findById(roleID);
     if (!role) {
         throw new HttpError(statusCode.badRequest, message.roleNotExist);
@@ -102,7 +107,7 @@ export const addRolePermissionController = catchAsync(async (req: Request, res: 
 
 export const deleteRolePermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { roleID } = req.params;
-    const { permissions } = req.body;
+    const permissions = Array.from(new Set(req.body.permissions as string[]));
     const role = await Role.findById(roleID);
     if (!role) {
         throw new HttpError(statusCode.badRequest, message.roleNotExist);
