@@ -1,21 +1,31 @@
-// import fetch from 'node-fetch';
-// import { AUTH_KEY, TEMPLATE_ID } from '../config';
+import axios from 'axios';
+import { MSG91_AUTH_KEY, MSG91_TEMPLATE_ID, otpExpiry, otpLength } from '../config';
+import { logger } from '../logger/winston';
 
-// export const send = async (mobileNO: string) => {
-//     await fetch(
-//         `https://api.msg91.com/api/v5/otp?authkey=${AUTH_KEY}&template_id=${TEMPLATE_ID}&mobile=${mobileNO}&otp_length=4`
-//     );
-// };
+const baseUrl = `https://api.msg91.com/api/v5/otp`;
 
-// export const verify = async (mobileNo: string, otp: string) => {
-//     const data = await fetch(
-//         `https://api.msg91.com/api/v5/otp/verify?mobile=${mobileNo}&otp=${otp}&authkey=${AUTH_KEY}`,
-//         { method: 'POST' }
-//     );
-//     const obj = await data.json();
-//     return obj;
-// };
+const headers = {
+    'Content-Type': 'application/json'
+};
 
-// export const resend = async (mobileNO: string) => {
-//     await fetch(`https://api.msg91.com/api/v5/otp/retry?mobile=${mobileNO}&authkey=${AUTH_KEY}`, { method: 'POST' });
-// };
+export const sendOtp = async (phoneNumber: string) => {
+    return new Promise((resolve, reject) => {
+        axios({
+            method: 'get',
+            url: `${baseUrl}?authkey=${MSG91_AUTH_KEY}&template_id=${MSG91_TEMPLATE_ID}&mobile=${phoneNumber}&otp_length=${otpLength}&otp_expiry=${otpExpiry}`,
+            headers
+        })
+            .then((response) => {
+                logger.info(`otp.send.info ${response}`);
+                resolve();
+            })
+            .catch((error) => {
+                logger.error(`otp.send.error ${error}`);
+                reject();
+            });
+    });
+};
+
+export const verifyOtp = async () => {
+    return new Promise((resolve, reject) => {});
+};
