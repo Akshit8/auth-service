@@ -44,13 +44,16 @@ export const getAllUsersController = catchAsync(async (req: Request, res: Respon
     const { skip, limit } = req.query;
     const allUsers: UserDocument[] = await User.find(
         {},
-        {},
+        {
+            phoneNumber: false,
+            serviceUserID: false
+        },
         {
             skip: +skip!,
             limit: +limit!
         }
     ).sort('createdAt');
-    next(new HttpResponse(statusCode.ok, allUsers));
+    next(new HttpResponse(statusCode.ok, { users: allUsers }));
 });
 
 export const updateUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -63,14 +66,14 @@ export const updateUserController = catchAsync(async (req: Request, res: Respons
     if (userName) {
         const checkUserNameExist = await User.findOne({ userName });
         if (checkUserNameExist) {
-            throw new HttpError(statusCode.badRequest, 'username already exists');
+            throw new HttpError(statusCode.badRequest, message.userAlreadyExistsName);
         }
         user.userName = userName;
     }
     if (phoneNumber) {
         const checkPhoneNumberExist = await User.findOne({ userName });
         if (checkPhoneNumberExist) {
-            throw new HttpError(statusCode.badRequest, 'phone number already exists');
+            throw new HttpError(statusCode.badRequest, message.userAlreadyExistsNo);
         }
         user.phoneNumber = phoneNumber;
     }

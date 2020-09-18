@@ -114,7 +114,7 @@ export const deleteRolePermissionController = catchAsync(async (req: Request, re
     }
     permissions.forEach((permission: string) => {
         if (!role.permissions.includes(permission)) {
-            throw new HttpError(statusCode.badRequest, 'Permission do not exist');
+            throw new HttpError(statusCode.badRequest, message.permissionNotExists);
         }
     });
     role.permissions = role.permissions.filter((permission: string) => {
