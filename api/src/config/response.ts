@@ -25,5 +25,6 @@ export const message: { [index: string]: string } = {
     userAlreadyExistsID: 'User already exists with that id',
     userNotExist: 'User not exist',
     phoneNumberNotLoggedIn: 'Phone number not logged in',
+    phoneNumberLoggedIn: 'Phone number already logged in',
     invalidOtp: 'Invalid otp in the request'
 };

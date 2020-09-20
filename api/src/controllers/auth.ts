@@ -8,6 +8,10 @@ import { sendOtp, verifyOtp, getJwtToken, jwtPayloadInterface, resendOtp } from 
 
 export const loginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { phoneNumber } = req.body;
+    const checkPhoneNumber = await LoginSession.findOne({ phoneNumber });
+    if (checkPhoneNumber) {
+        throw new HttpError(statusCode.badRequest, message.phoneNumberLoggedIn);
+    }
     const user = await User.findOne({ phoneNumber });
     if (!user) {
         throw new HttpError(statusCode.badRequest, message.userNotExist);

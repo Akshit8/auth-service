@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { loginController, otpVerifyController } from '../controllers';
+import { loginController, logoutController, otpVerifyController, resendController } from '../controllers';
 
 const router: Router = Router();
 
 router.post('/login', loginController);
 router.post('/verify', otpVerifyController);
-router.get('/resend');
-router.get('/logout');
+router.get('/resend', resendController);
+router.get('/logout', logoutController);
 
 export default router;
