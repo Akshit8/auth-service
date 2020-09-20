@@ -1,9 +1,10 @@
 import { Router } from 'express';
+import { loginController, otpVerifyController } from '../controllers';
 
 const router: Router = Router();
 
-router.post('/login');
-router.post('/verify');
+router.post('/login', loginController);
+router.post('/verify', otpVerifyController);
 router.get('/resend/:phoneNumber');
 router.get('/logout');
 

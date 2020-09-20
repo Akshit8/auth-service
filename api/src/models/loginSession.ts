@@ -12,13 +12,19 @@ const loginSessionSchema = new Schema(
             type: String,
             required: true
         },
-        token: {
+        phoneNumber: {
             type: String,
             required: true
         },
+        token: {
+            type: String
+        },
         tokenExpiry: {
-            type: Number,
-            required: true
+            type: Number
+        },
+        loggedIn: {
+            type: Boolean,
+            default: false
         }
     },
     {
