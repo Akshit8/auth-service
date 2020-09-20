@@ -15,5 +15,16 @@ export const message: { [index: string]: string } = {
     uploadError: 'Error occured while uploading file',
     authHeaderRequired: 'Authorization header required',
     serviceNameRequired: 'Service name required',
-    invalidService: 'Invalid service name'
+    invalidService: 'Invalid service name',
+    permissionAlreadyExists: 'Permission already exists',
+    permissionNotExists: 'Permission not exists',
+    roleAlreadyExists: 'Role already exists',
+    roleNotExist: 'Role not exists',
+    userAlreadyExistsName: 'User already exists with that name',
+    userAlreadyExistsNo: 'User already exists with that phone-number',
+    userAlreadyExistsID: 'User already exists with that id',
+    userNotExist: 'User not exist',
+    phoneNumberNotLoggedIn: 'Phone number not logged in',
+    phoneNumberLoggedIn: 'Phone number already logged in',
+    invalidOtp: 'Invalid otp in the request'
 };
