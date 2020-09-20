@@ -4,8 +4,7 @@ import { HttpError } from '../httpError';
 import { HttpResponse } from '../httpResponse';
 import { catchAsync } from '../middleware';
 import { LoginSession, Role, User } from '../models';
-import { sendOtp, verifyOtp } from '../utils';
-import { jwtPayloadInterface } from '../utils/jwt';
+import { sendOtp, verifyOtp, getJwtToken, jwtPayloadInterface } from '../utils';
 
 export const loginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { phoneNumber } = req.body;
@@ -41,7 +40,8 @@ export const otpVerifyController = catchAsync(async (req: Request, res: Response
         roles: userRoles!.roles,
         permissions
     };
-    next(new HttpResponse(statusCode.ok, { jwtPayload }));
+    const token = await getJwtToken(jwtPayload);
+    next(new HttpResponse(statusCode.ok, { token }));
 });
 
 export const resendController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
