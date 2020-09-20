@@ -41,15 +41,19 @@ export const verifyOtp = async (phoneNumber: string, otp: string) => {
 };
 
 export const resendOtp = async (phoneNumber: string) => {
-    axios({
-        method: 'post',
-        url: `${baseUrl}/retry?mobile=${phoneNumber}&authkey=${MSG91_AUTH_KEY}`,
-        headers
-    })
-        .then((response) => {
-            logger.info(`otp.resend.info ${JSON.stringify(response.data)}`);
+    return new Promise((resolve, reject) => {
+        axios({
+            method: 'post',
+            url: `${baseUrl}/retry?mobile=${phoneNumber}&authkey=${MSG91_AUTH_KEY}`,
+            headers
         })
-        .catch((error) => {
-            logger.error(`otp.resend.error ${error}`);
-        });
+            .then((response) => {
+                logger.info(`otp.resend.info ${JSON.stringify(response.data)}`);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                logger.error(`otp.resend.error ${error}`);
+                reject();
+            });
+    });
 };

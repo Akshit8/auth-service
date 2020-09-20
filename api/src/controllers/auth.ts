@@ -30,7 +30,7 @@ export const otpVerifyController = catchAsync(async (req: Request, res: Response
     }
     const verifyphoneNumberOtp = await verifyOtp(phoneNumber, otp);
     if (verifyphoneNumberOtp !== 'success') {
-        throw new HttpError(statusCode.badRequest, message.invalidOtp);
+        throw new HttpError(statusCode.badRequest, message.invalidExpiredOtp);
     }
     const userRoles = await User.findOne({ serviceUserID: checkPhoneNumber.userID }).select('roles');
     let permissions: string[] = [];
@@ -54,7 +54,10 @@ export const resendController = catchAsync(async (req: Request, res: Response, n
     if (!checkLoginSession) {
         throw new HttpError(statusCode.badRequest, message.phoneNumberNotLoggedIn);
     }
-    resendOtp(phoneNumber);
+    const response: any = await resendOtp(phoneNumber);
+    if (response.type !== 'success') {
+        throw new HttpError(statusCode.badRequest, message.otpResendFailed);
+    }
     next(new HttpResponse(statusCode.ok, null));
 });
 
