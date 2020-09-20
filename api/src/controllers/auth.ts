@@ -4,7 +4,7 @@ import { HttpError } from '../httpError';
 import { HttpResponse } from '../httpResponse';
 import { catchAsync } from '../middleware';
 import { LoginSession, Role, User } from '../models';
-import { sendOtp, verifyOtp, getJwtToken, jwtPayloadInterface } from '../utils';
+import { sendOtp, verifyOtp, getJwtToken, jwtPayloadInterface, resendOtp } from '../utils';
 
 export const loginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { phoneNumber } = req.body;
@@ -44,6 +44,18 @@ export const otpVerifyController = catchAsync(async (req: Request, res: Response
     next(new HttpResponse(statusCode.ok, { token }));
 });
 
-export const resendController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+export const resendController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { phoneNumber } = req.body;
+    const checkLoginSession = await LoginSession.findOne({ phoneNumber });
+    if (!checkLoginSession) {
+        throw new HttpError(statusCode.badRequest, message.phoneNumberNotLoggedIn);
+    }
+    resendOtp(phoneNumber);
+    next(new HttpResponse(statusCode.ok, null));
+});
 
-export const logoutController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+export const logoutController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.header('Authorization');
+    await LoginSession.findOneAndDelete({ token });
+    next(new HttpResponse(statusCode.ok, null));
+});

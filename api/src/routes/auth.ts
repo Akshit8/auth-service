@@ -5,7 +5,7 @@ const router: Router = Router();
 
 router.post('/login', loginController);
 router.post('/verify', otpVerifyController);
-router.get('/resend/:phoneNumber');
+router.get('/resend');
 router.get('/logout');
 
 export default router;
