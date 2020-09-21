@@ -31,11 +31,11 @@ export const verifyOtp = async (phoneNumber: string, otp: string) => {
         })
             .then((response) => {
                 logger.info(`otp.verify.info ${JSON.stringify(response.data)}`);
-                resolve(response.data.type);
+                resolve(response.data);
             })
             .catch((error) => {
                 logger.error(`otp.verify.error ${error}`);
-                reject();
+                reject(new Error());
             });
     });
 };
@@ -53,7 +53,7 @@ export const resendOtp = async (phoneNumber: string) => {
             })
             .catch((error) => {
                 logger.error(`otp.resend.error ${error}`);
-                reject();
+                reject(new Error());
             });
     });
 };
