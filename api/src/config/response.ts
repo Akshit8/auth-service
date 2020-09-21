@@ -9,13 +9,18 @@ export const statusCode: { [index: string]: number } = {
 };
 
 export const message: { [index: string]: string } = {
+    // app error message
     notFound: 'Not found',
     serverError: 'Internal server error',
+    // validator error message
     invalidParameters: 'Invalid parameters',
-    uploadError: 'Error occured while uploading file',
     authHeaderRequired: 'Authorization header required',
-    serviceNameRequired: 'Service name required',
-    invalidService: 'Invalid service name',
+    permissionNameRequired: 'Permission name required',
+    permissionDescriptionRequired: 'Permission description required',
+    permissionDescriptionShort: 'Permission description too short',
+    skipParameterRequired: 'skip parameter required',
+    limitParameterRequired: 'limit parameter required',
+    // controller errors
     permissionAlreadyExists: 'Permission already exists',
     permissionNotExists: 'Permission not exists',
     roleAlreadyExists: 'Role already exists',
