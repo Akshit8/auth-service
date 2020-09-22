@@ -1,4 +1,4 @@
-import { body, check, oneOf } from 'express-validator';
+import { body, oneOf } from 'express-validator';
 import { message } from '../config';
 
 export const addRoleSchema = () => {
@@ -33,5 +33,15 @@ export const updateRoleSchema = () => {
             ],
             message.invalidParameters
         )
+    ];
+};
+
+export const updateRolePermissionsSchema = () => {
+    return [
+        body('permissions')
+            .exists({ checkNull: true, checkFalsy: true })
+            .withMessage(message.rolePermissionRequired)
+            .custom((value: string[]) => value.length !== 0)
+            .withMessage(message.rolePermissionEmpty)
     ];
 };

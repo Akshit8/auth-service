@@ -8,7 +8,14 @@ import {
     getRoleController,
     updateRoleController
 } from '../controllers';
-import { addRoleSchema, headerSchema, paginationSchema, updateRoleSchema, validate } from '../validators';
+import {
+    addRoleSchema,
+    headerSchema,
+    paginationSchema,
+    updateRolePermissionsSchema,
+    updateRoleSchema,
+    validate
+} from '../validators';
 
 const router: Router = Router();
 
@@ -18,7 +25,7 @@ router.get('/allRoles', paginationSchema(), validate, getAllRolesController);
 router.patch('/update/:roleID', updateRoleSchema(), validate, updateRoleController);
 router.delete('/delete/:roleID', deleteRoleController);
 
-router.patch('/addPermission/:roleID', addRolePermissionController);
-router.delete('/deletePermission/:roleID', deleteRolePermissionController);
+router.patch('/addPermission/:roleID', updateRolePermissionsSchema, addRolePermissionController);
+router.delete('/deletePermission/:roleID', updateRolePermissionsSchema, deleteRolePermissionController);
 
 export default router;

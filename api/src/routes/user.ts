@@ -8,10 +8,11 @@ import {
     getUserController,
     updateUserController
 } from '../controllers';
+import { addUserSchema, headerSchema, validate } from '../validators';
 
 const router: Router = Router();
 
-router.post('/add', addUserController);
+router.post('/add', headerSchema(), addUserSchema(), validate, addUserController);
 router.get('/get/:userID', getUserController);
 router.get('/allUsers', getAllUsersController);
 router.patch('/update/:userID', updateUserController);
