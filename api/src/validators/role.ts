@@ -3,7 +3,11 @@ import { message } from '../config';
 
 export const addRoleSchema = () => {
     return [
-        body('roleName').exists({ checkNull: true, checkFalsy: true }).withMessage(message.roleNameRequired),
+        body('roleName')
+            .exists({ checkNull: true, checkFalsy: true })
+            .withMessage(message.roleNameRequired)
+            .custom((value: string) => value.match(/\D\D\D[_]\D\D\D/))
+            .withMessage(message.invalidRoleName),
         body('description')
             .exists({ checkNull: true, checkFalsy: true })
             .withMessage(message.roleDescriptionRequired)
@@ -15,7 +19,6 @@ export const addRoleSchema = () => {
             .withMessage(message.rolePermissionRequired)
             .custom((value: string[]) => value.length !== 0)
             .withMessage(message.rolePermissionEmpty)
-            .trim()
     ];
 };
 
@@ -27,7 +30,6 @@ export const updateRoleSchema = () => {
                 body('permissions')
                     .exists({ checkNull: true, checkFalsy: true })
                     .custom((value: string[]) => value.length !== 0)
-                    .trim()
             ],
             message.invalidParameters
         )

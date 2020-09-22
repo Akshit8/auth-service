@@ -6,6 +6,8 @@ export const addPermissionSchema = () => {
         body('permissionName')
             .exists({ checkNull: true, checkFalsy: true })
             .withMessage(message.permissionNameRequired)
+            .custom((value: string) => value.match(/\D\D\D[_]\D\D\D/))
+            .withMessage(message.invalidPermissionName)
             .trim(),
         body('description')
             .exists({ checkNull: true, checkFalsy: true })

@@ -59,7 +59,6 @@ export const updateRoleController = catchAsync(async (req: Request, res: Respons
     if (description) {
         role.description = description;
     }
-    console.log(permissions);
     if (permissions) {
         for (let i = 0; i < permissions.length; i++) {
             const permission = await Permission.findOne({ permissionName: permissions[i] });
