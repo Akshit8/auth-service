@@ -1,4 +1,4 @@
-import { header, validationResult } from 'express-validator';
+import { header, validationResult, query } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 import { catchAsync } from '../middleware';
 import { HttpError } from '../httpError';
@@ -7,6 +7,13 @@ import { message, statusCode } from '../config';
 export const headerSchema = () => {
     return [
         header('Authorization').exists({ checkNull: true, checkFalsy: true }).withMessage(message.authHeaderRequired)
+    ];
+};
+
+export const paginationSchema = () => {
+    return [
+        query('skip').exists().withMessage(message.skipParameterRequired).isNumeric(),
+        query('limit').exists().withMessage(message.limitParameterRequired).isNumeric()
     ];
 };
 
@@ -19,3 +26,4 @@ export const validate = catchAsync(async (req: Request, res: Response, next: Nex
 });
 
 export * from './permission';
+export * from './role';

@@ -9,22 +9,27 @@ export const statusCode: { [index: string]: number } = {
 };
 
 export const message: { [index: string]: string } = {
-    // app error message
+    // app error messages
     notFound: 'Not found',
     serverError: 'Internal server error',
-    // validator error message
+    // validator error messages
     invalidParameters: 'Invalid parameters',
     authHeaderRequired: 'Authorization header required',
+    skipParameterRequired: 'skip parameter required',
+    limitParameterRequired: 'limit parameter required',
     permissionNameRequired: 'Permission name required',
     permissionDescriptionRequired: 'Permission description required',
     permissionDescriptionShort: 'Permission description too short',
-    skipParameterRequired: 'skip parameter required',
-    limitParameterRequired: 'limit parameter required',
-    // controller errors
+    roleNameRequired: 'Role name required',
+    roleDescriptionRequired: 'Role description required',
+    roleDescriptionShort: 'Role description too short',
+    rolePermissionRequired: 'Role permissions required',
+    rolePermissionEmpty: 'Role permissions empty',
+    // controller error messages
     permissionAlreadyExists: 'Permission already exists',
     permissionNotExists: 'Permission not exists',
     roleAlreadyExists: 'Role already exists',
-    roleNotExist: 'Role not exists',
+    roleNotExists: 'Role not exists',
     userAlreadyExistsName: 'User already exists with that name',
     userAlreadyExistsNo: 'User already exists with that phone-number',
     userAlreadyExistsID: 'User already exists with that id',

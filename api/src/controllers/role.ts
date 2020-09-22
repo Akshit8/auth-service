@@ -15,7 +15,7 @@ export const addRoleController = catchAsync(async (req: Request, res: Response, 
     for (let i = 0; i < permissions.length; i++) {
         const permission = await Permission.findOne({ permissionName: permissions[i] });
         if (!permission) {
-            throw new HttpError(statusCode.badRequest, message.permissionNotExist);
+            throw new HttpError(statusCode.badRequest, message.permissionNotExists);
         }
     }
     const newPermission = new Role({ roleName, description, permissions });
@@ -54,16 +54,17 @@ export const updateRoleController = catchAsync(async (req: Request, res: Respons
     const permissions = Array.from(new Set(req.body.permissions as string[]));
     const role = await Role.findById(roleID);
     if (!role) {
-        throw new HttpError(statusCode.badRequest, message.roleNotExist);
+        throw new HttpError(statusCode.badRequest, message.roleNotExists);
     }
     if (description) {
         role.description = description;
     }
+    console.log(permissions);
     if (permissions) {
         for (let i = 0; i < permissions.length; i++) {
             const permission = await Permission.findOne({ permissionName: permissions[i] });
             if (!permission) {
-                throw new HttpError(statusCode.badRequest, message.permissionNotExist);
+                throw new HttpError(statusCode.badRequest, message.permissionNotExists);
             }
         }
         role.permissions = permissions;
@@ -76,7 +77,7 @@ export const deleteRoleController = catchAsync(async (req: Request, res: Respons
     const { roleID } = req.params;
     const role = await Role.findById(roleID);
     if (!role) {
-        throw new HttpError(statusCode.badRequest, message.roleNotExist);
+        throw new HttpError(statusCode.badRequest, message.roleNotExists);
     }
     await role.remove();
     next(new HttpResponse(statusCode.ok, null));
@@ -87,12 +88,12 @@ export const addRolePermissionController = catchAsync(async (req: Request, res: 
     const permissions = Array.from(new Set(req.body.permissions as string[]));
     const role = await Role.findById(roleID);
     if (!role) {
-        throw new HttpError(statusCode.badRequest, message.roleNotExist);
+        throw new HttpError(statusCode.badRequest, message.roleNotExists);
     }
     for (let i = 0; i < permissions.length; i++) {
         const permission = await Permission.findOne({ permissionName: permissions[i] });
         if (!permission) {
-            throw new HttpError(statusCode.badRequest, message.permissionNotExist);
+            throw new HttpError(statusCode.badRequest, message.permissionNotExists);
         }
     }
     permissions.forEach((permission: string) => {
@@ -110,7 +111,7 @@ export const deleteRolePermissionController = catchAsync(async (req: Request, re
     const permissions = Array.from(new Set(req.body.permissions as string[]));
     const role = await Role.findById(roleID);
     if (!role) {
-        throw new HttpError(statusCode.badRequest, message.roleNotExist);
+        throw new HttpError(statusCode.badRequest, message.roleNotExists);
     }
     permissions.forEach((permission: string) => {
         if (!role.permissions.includes(permission)) {

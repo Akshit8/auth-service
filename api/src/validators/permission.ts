@@ -15,10 +15,3 @@ export const addPermissionSchema = () => {
             .trim()
     ];
 };
-
-export const allPermissionSchema = () => {
-    return [
-        query('skip').exists().withMessage(message.skipParameterRequired).isNumeric(),
-        query('limit').exists().withMessage(message.limitParameterRequired).isNumeric()
-    ];
-};
