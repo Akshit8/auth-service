@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
     addRoleController,
+    addRoleFromRoleController,
     addRolePermissionController,
     deleteRoleController,
     deleteRolePermissionController,
@@ -39,5 +40,6 @@ router.delete(
     validate,
     deleteRolePermissionController
 );
+router.post('/add/fromRoles', addRoleFromRoleController);
 
 export default router;
