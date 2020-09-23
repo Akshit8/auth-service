@@ -25,7 +25,19 @@ router.get('/allRoles', paginationSchema(), validate, getAllRolesController);
 router.patch('/update/:roleID', updateRoleSchema(), validate, updateRoleController);
 router.delete('/delete/:roleID', deleteRoleController);
 
-router.patch('/addPermission/:roleID', updateRolePermissionsSchema, addRolePermissionController);
-router.delete('/deletePermission/:roleID', updateRolePermissionsSchema, deleteRolePermissionController);
+router.patch(
+    '/addPermission/:roleID',
+    headerSchema(),
+    updateRolePermissionsSchema(),
+    validate,
+    addRolePermissionController
+);
+router.delete(
+    '/deletePermission/:roleID',
+    headerSchema(),
+    updateRolePermissionsSchema(),
+    validate,
+    deleteRolePermissionController
+);
 
 export default router;

@@ -8,7 +8,7 @@ import {
     getUserController,
     updateUserController
 } from '../controllers';
-import { addUserSchema, headerSchema, validate } from '../validators';
+import { addUserSchema, headerSchema, updateUserRoleSchema, validate } from '../validators';
 
 const router: Router = Router();
 
@@ -18,7 +18,7 @@ router.get('/allUsers', getAllUsersController);
 router.patch('/update/:userID', updateUserController);
 router.delete('/delete/:userID', deleteUserController);
 
-router.patch('/addRole/:userID', addUserRoleController);
-router.delete('/deleteRole/:userID', deleteUserRoleController);
+router.patch('/addRole/:userID', headerSchema(), updateUserRoleSchema(), validate, addUserRoleController);
+router.delete('/deleteRole/:userID', headerSchema(), updateUserRoleSchema(), validate, deleteUserRoleController);
 
 export default router;

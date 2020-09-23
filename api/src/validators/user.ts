@@ -6,7 +6,7 @@ export const addUserSchema = () => {
         body('userName')
             .exists({ checkNull: true, checkFalsy: true })
             .withMessage(message.userNameRequired)
-            .isLength({ min: 15 })
+            .isLength({ min: 5 })
             .withMessage(message.invalidUserName)
             .trim(),
         body('phoneNumber')
@@ -18,7 +18,7 @@ export const addUserSchema = () => {
         body('serviceUserID')
             .exists({ checkNull: true, checkFalsy: true })
             .withMessage(message.serviceUserIDRequired)
-            .custom((value: string) => value.length > 0)
+            .isMongoId()
             .withMessage(message.invalidServiceUserID)
             .trim(),
         body('roles')
@@ -32,7 +32,7 @@ export const addUserSchema = () => {
 export const updateUserSchema = () => {
     return [
         oneOf([
-            body('userName').exists({ checkNull: true, checkFalsy: true }).isLength({ min: 15 }).trim(),
+            body('userName').exists({ checkNull: true, checkFalsy: true }).isLength({ min: 5 }).trim(),
             body('phoneNumber')
                 .exists({ checkNull: true, checkFalsy: true })
                 .custom((value: string) => value.length === 13)
@@ -41,5 +41,15 @@ export const updateUserSchema = () => {
                 .exists({ checkNull: true, checkFalsy: true })
                 .custom((value: string[]) => value.length !== 0)
         ])
+    ];
+};
+
+export const updateUserRoleSchema = () => {
+    return [
+        body('roles')
+            .exists({ checkNull: true, checkFalsy: true })
+            .withMessage(message.userRoleRequired)
+            .custom((value: string[]) => value.length !== 0)
+            .withMessage(message.userRoleEmpty)
     ];
 };
