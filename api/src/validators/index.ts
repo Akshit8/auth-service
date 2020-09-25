@@ -6,7 +6,14 @@ import { message, statusCode } from '../config';
 
 export const headerSchema = () => {
     return [
-        header('Authorization').exists({ checkNull: true, checkFalsy: true }).withMessage(message.authHeaderRequired)
+        header('Authorization')
+            .exists({ checkNull: true, checkFalsy: true })
+            .withMessage(message.authHeaderRequired)
+            .customSanitizer((value: string) => {
+                return value.replace('Bearer ', '');
+            })
+            .isJWT()
+            .withMessage(message.invalidAuthHeader)
     ];
 };
 

@@ -71,6 +71,7 @@ export const resendController = catchAsync(async (req: Request, res: Response, n
 
 export const logoutController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.header('Authorization');
+    console.log(token);
     await LoginSession.findOneAndDelete({ token });
     next(new HttpResponse(statusCode.ok, null));
 });

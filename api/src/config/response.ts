@@ -15,6 +15,7 @@ export const message: { [index: string]: string } = {
     // validator error messages
     invalidParameters: 'Invalid parameters',
     authHeaderRequired: 'Authorization header required',
+    invalidAuthHeader: 'Invlaid Authorization header',
     skipParameterRequired: 'skip parameter required',
     limitParameterRequired: 'limit parameter required',
     permissionNameRequired: 'Permission name required',
