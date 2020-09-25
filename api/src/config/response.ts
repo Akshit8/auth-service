@@ -35,6 +35,8 @@ export const message: { [index: string]: string } = {
     invalidServiceUserID: 'Invalid service user ID',
     userRoleRequired: 'User roles required',
     userRoleEmpty: 'User roles empty',
+    otpRequired: 'OTP required',
+    otpInvalid: 'OTP invalid',
     // controller error messages
     permissionAlreadyExists: 'Permission already exists',
     permissionNotExists: 'Permission not exists',

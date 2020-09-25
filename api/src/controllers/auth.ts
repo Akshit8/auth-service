@@ -7,32 +7,36 @@ import { LoginSession, Role, User } from '../models';
 import { sendOtp, verifyOtp, getJwtToken, jwtPayloadInterface, resendOtp } from '../utils';
 
 export const loginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { phoneNumber } = req.body;
-    const checkPhoneNumber = await LoginSession.findOne({ phoneNumber });
-    if (checkPhoneNumber) {
-        throw new HttpError(statusCode.badRequest, message.phoneNumberLoggedIn);
+    const { userName } = req.body;
+    const checkUserName = await LoginSession.findOne({ userName });
+    if (checkUserName) {
+        await LoginSession.findOneAndDelete({ userName });
     }
-    const user = await User.findOne({ phoneNumber });
+    const user = await User.findOne({ userName });
     if (!user) {
         throw new HttpError(statusCode.badRequest, message.userNotExist);
     }
-    const newLoginSession = new LoginSession({ userID: user.serviceUserID, phoneNumber: user.phoneNumber });
+    const newLoginSession = new LoginSession({
+        userID: user.serviceUserID,
+        userName: user.userName,
+        phoneNumber: user.phoneNumber.substr(1)
+    });
     await newLoginSession.save();
-    sendOtp(user.phoneNumber);
+    sendOtp(user.phoneNumber.substr(1));
     next(new HttpResponse(statusCode.ok, null));
 });
 
 export const otpVerifyController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { phoneNumber, otp } = req.body;
-    const checkPhoneNumber = await LoginSession.findOne({ phoneNumber });
-    if (!checkPhoneNumber) {
+    const { userName, otp } = req.body;
+    const checkUserName = await LoginSession.findOne({ userName });
+    if (!checkUserName) {
         throw new HttpError(statusCode.badRequest, message.phoneNumberNotLoggedIn);
     }
-    const verifyphoneNumberOtp: any = await verifyOtp(phoneNumber, otp);
+    const verifyphoneNumberOtp: any = await verifyOtp(checkUserName.phoneNumber, otp);
     if (verifyphoneNumberOtp.type !== 'success') {
         throw new HttpError(statusCode.badRequest, message.invalidExpiredOtp);
     }
-    const userRoles = await User.findOne({ serviceUserID: checkPhoneNumber.userID }).select('roles');
+    const userRoles = await User.findOne({ serviceUserID: checkUserName.userID }).select('roles');
     let permissions: string[] = [];
     // using ! to ignore ts:2533
     for (let i = 0; i < userRoles!.roles.length; i++) {
@@ -40,21 +44,25 @@ export const otpVerifyController = catchAsync(async (req: Request, res: Response
         permissions = permissions.concat(rolePermission!.permissions);
     }
     const jwtPayload: jwtPayloadInterface = {
-        userID: checkPhoneNumber.userID,
+        userID: checkUserName.userID,
         roles: userRoles!.roles,
         permissions
     };
     const token = await getJwtToken(jwtPayload);
+    const tokenExpiry = Date.now() + 12 * 60 * 60 * 1000;
+    checkUserName.token = token as string;
+    checkUserName.tokenExpiry = tokenExpiry;
+    await checkUserName.save();
     next(new HttpResponse(statusCode.ok, { token }));
 });
 
 export const resendController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { phoneNumber } = req.body;
-    const checkLoginSession = await LoginSession.findOne({ phoneNumber });
+    const { userName } = req.body;
+    const checkLoginSession = await LoginSession.findOne({ userName });
     if (!checkLoginSession) {
         throw new HttpError(statusCode.badRequest, message.phoneNumberNotLoggedIn);
     }
-    const response: any = await resendOtp(phoneNumber);
+    const response: any = await resendOtp(checkLoginSession.phoneNumber);
     if (response.type !== 'success') {
         throw new HttpError(statusCode.badRequest, response.message);
     }

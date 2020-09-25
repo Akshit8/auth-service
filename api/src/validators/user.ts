@@ -12,7 +12,7 @@ export const addUserSchema = () => {
         body('phoneNumber')
             .exists({ checkNull: true, checkFalsy: true })
             .withMessage(message.userPhoneNumberRequired)
-            .custom((value: string) => value.length === 13)
+            .custom((value: string) => value.length === 13 && value.substring(0, 3) === '+91')
             .withMessage(message.invalidPhoneNumber)
             .trim(),
         body('serviceUserID')
