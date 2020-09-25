@@ -41,6 +41,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.2",
     "morgan": "^1.10.0",
+    "saslprep": "^1.0.3",
     "winston": "^3.3.3"
   }
 }
