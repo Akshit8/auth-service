@@ -6,7 +6,7 @@ import { catchAsync } from '../../middleware';
 import { LoginSession, Role, User } from '../../models';
 import { sendOtp, verifyOtp, getJwtToken, jwtPayloadInterface, resendOtp } from '../../utils';
 
-export const loginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const otpLoginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userName } = req.body;
     const checkUserName = await LoginSession.findOne({ userName });
     if (checkUserName) {
@@ -56,7 +56,7 @@ export const otpVerifyController = catchAsync(async (req: Request, res: Response
     next(new HttpResponse(statusCode.ok, { token }));
 });
 
-export const resendController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const otpResendController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userName } = req.body;
     const checkLoginSession = await LoginSession.findOne({ userName });
     if (!checkLoginSession) {

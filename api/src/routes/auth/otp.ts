@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { loginController, otpVerifyController, resendController } from '../../controllers';
+import { otpLoginController, otpVerifyController, otpResendController } from '../../controllers';
 import { validate } from '../../validators';
 import { loginAndResendSchema, verifySchema } from '../../validators/auth';
 
 const router: Router = Router();
 
-router.post('/login', loginAndResendSchema(), validate, loginController);
+router.post('/login', loginAndResendSchema(), validate, otpLoginController);
 router.post('/verify', verifySchema(), validate, otpVerifyController);
-router.post('/resend', loginAndResendSchema(), validate, resendController);
+router.post('/resend', loginAndResendSchema(), validate, otpResendController);
 
 export default router;

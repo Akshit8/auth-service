@@ -50,5 +50,6 @@ export const message: { [index: string]: string } = {
     phoneNumberNotLoggedIn: 'Phone number not logged in',
     phoneNumberLoggedIn: 'Phone number already logged in',
     invalidExpiredOtp: 'OTP is expired or invalid',
-    otpResendFailed: 'OTP resend request failed'
+    otpResendFailed: 'OTP resend request failed',
+    usernameNotMatchPassword: 'username and password do not match'
 };
