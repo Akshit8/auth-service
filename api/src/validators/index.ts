@@ -35,3 +35,4 @@ export const validate = catchAsync(async (req: Request, res: Response, next: Nex
 export * from './permission';
 export * from './role';
 export * from './user';
+export * from './auth';
