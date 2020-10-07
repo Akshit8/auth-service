@@ -1,17 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
-import { message, statusCode } from '../../config';
+import { getTokenExpiry, message, statusCode } from '../../config';
 import { HttpError } from '../../httpError';
 import { HttpResponse } from '../../httpResponse';
 import { catchAsync } from '../../middleware';
-import { LoginSession, Role, User } from '../../models';
-import { sendOtp, verifyOtp, getJwtToken, jwtPayloadInterface, resendOtp } from '../../utils';
+import { LoginSession, User } from '../../models';
+import { sendOtp, verifyOtp, getJwtToken, resendOtp } from '../../utils';
+
+/**
+ *  Passwordless OTP strategy
+ *  uses MSG 91 otp service
+ */
 
 export const otpLoginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userName } = req.body;
-    const checkUserName = await LoginSession.findOne({ userName });
-    if (checkUserName) {
-        await LoginSession.findOneAndDelete({ userName });
-    }
+    await LoginSession.checkUserNameAndDelete(userName);
     const user = await User.findOne({ userName });
     if (!user) {
         throw new HttpError(statusCode.badRequest, message.userNotExist);
@@ -28,31 +30,21 @@ export const otpLoginController = catchAsync(async (req: Request, res: Response,
 
 export const otpVerifyController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userName, otp } = req.body;
-    const checkUserName = await LoginSession.findOne({ userName });
-    if (!checkUserName) {
+    const loginUser = await LoginSession.findOne({ userName });
+    if (!loginUser) {
         throw new HttpError(statusCode.badRequest, message.phoneNumberNotLoggedIn);
     }
-    const verifyphoneNumberOtp: any = await verifyOtp(checkUserName.phoneNumber, otp);
+    const verifyphoneNumberOtp: any = await verifyOtp(loginUser.phoneNumber, otp);
     if (verifyphoneNumberOtp.type !== 'success') {
         throw new HttpError(statusCode.badRequest, message.invalidExpiredOtp);
     }
-    const userRoles = await User.findOne({ serviceUserID: checkUserName.userID }).select('roles');
-    let permissions: string[] = [];
-    // using ! to ignore ts:2533
-    for (let i = 0; i < userRoles!.roles.length; i++) {
-        const rolePermission = await Role.findOne({ roleName: userRoles!.roles[i] }).select('permissions');
-        permissions = permissions.concat(rolePermission!.permissions);
-    }
-    const jwtPayload: jwtPayloadInterface = {
-        userID: checkUserName.userID,
-        roles: userRoles!.roles,
-        permissions
-    };
+    const jwtPayload = await User.getUserRolesPermissions(loginUser.userID);
     const token = await getJwtToken(jwtPayload);
-    const tokenExpiry = Date.now() + 12 * 60 * 60 * 1000;
-    checkUserName.token = token as string;
-    checkUserName.tokenExpiry = tokenExpiry;
-    await checkUserName.save();
+
+    loginUser.token = token as string;
+    loginUser.tokenExpiry = getTokenExpiry();
+    loginUser.loggedIn = true;
+    await loginUser.save();
     next(new HttpResponse(statusCode.ok, { token }));
 });
 

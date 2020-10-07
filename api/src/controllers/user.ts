@@ -1,101 +1,75 @@
 import { NextFunction, Request, Response } from 'express';
 import { message, statusCode } from '../config';
-import { HttpError } from '../httpError';
 import { HttpResponse } from '../httpResponse';
 import { catchAsync } from '../middleware';
-import { Role, User, UserDocument } from '../models';
+import { User, UserDocument } from '../models';
 
 export const addUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { userName, phoneNumber, serviceUserID } = req.body;
+    const { userName, email, phoneNumber, password, serviceUserID, serviceName, aadharNumber } = req.body;
     const roles = Array.from(new Set(req.body.roles as string[]));
-    const userByName = await User.findOne({ userName });
-    if (userByName) {
-        throw new HttpError(statusCode.badRequest, message.userAlreadyExistsName);
-    }
-    const userByNo = await User.findOne({ phoneNumber });
-    if (userByNo) {
-        throw new HttpError(statusCode.badRequest, message.userAlreadyExistsNo);
-    }
-    const userByID = await User.findOne({ serviceUserID });
-    if (userByID) {
-        throw new HttpError(statusCode.badRequest, message.userAlreadyExistsID);
-    }
-    for (let i = 0; i < roles.length; i++) {
-        const role = await Role.findOne({ roleName: roles[i] });
-        if (!role) {
-            throw new HttpError(statusCode.badRequest, message.roleNotExist);
-        }
-    }
-    const newUser = new User({ userName, phoneNumber, serviceUserID, roles });
+    await User.checkUserByParameter({ userName }, message.userAlreadyExistsName);
+    await User.checkUserByParameter({ email }, message.userAlreadyExistsMail);
+    await User.checkUserByParameter({ phoneNumber }, message.userAlreadyExistsPhoneNumber);
+    await User.checkUserByParameter({ serviceUserID }, message.userAlreadyExistsID);
+    await User.checkUserByParameter({ aadharNumber }, message.userAlreadyExistsAadharNo);
+    await User.checkAllRolesValid(roles);
+    const newUser = new User({
+        userName,
+        email,
+        phoneNumber,
+        password,
+        serviceUserID,
+        serviceName,
+        aadharNumber,
+        roles
+    });
     await newUser.save();
-    next(new HttpResponse(statusCode.created, null));
+    next(new HttpResponse(statusCode.created, { user: newUser }));
 });
 
 export const getUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userID } = req.params;
-    const user = await User.findById(userID);
-    if (!user) {
-        throw new HttpError(statusCode.badRequest, message.userNotExist);
-    }
-    next(new HttpResponse(statusCode.ok, user));
+    const user = await User.checkUserById(userID);
+    next(new HttpResponse(statusCode.ok, { user }));
 });
 
 export const getAllUsersController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { skip, limit } = req.query;
-    const allUsers: UserDocument[] = await User.find(
-        {},
-        {
-            phoneNumber: false,
-            serviceUserID: false
-        },
-        {
-            skip: +skip!,
-            limit: +limit!
-        }
-    ).sort('createdAt');
+    const allUsers: UserDocument[] = await User.getAllUsers(+skip!, +limit!);
     next(new HttpResponse(statusCode.ok, { users: allUsers }));
 });
 
 export const updateUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userID } = req.params;
-    const { userName, phoneNumber, roles } = req.body;
-    const user = await User.findById(userID);
-    if (!user) {
-        throw new HttpError(statusCode.badRequest, message.userNotExist);
-    }
+    const { userName, email, phoneNumber, password } = req.body;
+    const roles = Array.from(new Set(req.body.roles as string[]));
+    const user = await User.checkUserById(userID);
     if (userName) {
-        const checkUserNameExist = await User.findOne({ userName });
-        if (checkUserNameExist) {
-            throw new HttpError(statusCode.badRequest, message.userAlreadyExistsName);
-        }
+        await User.checkUserByParameter({ userName }, message.userAlreadyExistsName);
         user.userName = userName;
     }
+    if (email) {
+        await User.checkUserByParameter({ email }, message.userAlreadyExistsMail);
+        user.email = email;
+    }
     if (phoneNumber) {
-        const checkPhoneNumberExist = await User.findOne({ userName });
-        if (checkPhoneNumberExist) {
-            throw new HttpError(statusCode.badRequest, message.userAlreadyExistsNo);
-        }
+        await User.checkUserByParameter({ phoneNumber }, message.userAlreadyExistsPhoneNo);
         user.phoneNumber = phoneNumber;
     }
+    if (password) {
+        user.password = password;
+    }
     if (roles) {
-        for (let i = 0; i < roles.length; i++) {
-            const role = await Role.findOne({ roleName: roles[i] });
-            if (!role) {
-                throw new HttpError(statusCode.badRequest, message.roleNotExist);
-            }
-        }
+        await User.checkAllRolesValid(roles);
         user.roles = roles;
     }
     await user.save();
-    next(new HttpResponse(statusCode.ok, user));
+    next(new HttpResponse(statusCode.ok, { user }));
 });
 
 export const deleteUserController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userID } = req.params;
-    const user = await User.findById(userID);
-    if (!user) {
-        throw new HttpError(statusCode.badRequest, message.userNotExist);
-    }
+    const user = await User.checkUserById(userID);
     await user.remove();
     next(new HttpResponse(statusCode.ok, null));
 });
@@ -103,21 +77,9 @@ export const deleteUserController = catchAsync(async (req: Request, res: Respons
 export const addUserRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userID } = req.params;
     const { roles } = req.body;
-    const user = await User.findById(userID);
-    if (!user) {
-        throw new HttpError(statusCode.badRequest, message.userNotExist);
-    }
-    for (let i = 0; i < roles.length; i++) {
-        const role = await Role.findOne({ roleName: roles[i] });
-        if (!role) {
-            throw new HttpError(statusCode.badRequest, message.roleNotExist);
-        }
-    }
-    roles.forEach((role: string) => {
-        if (user.roles.includes(role)) {
-            throw new HttpError(statusCode.badRequest, message.roleAlreadyExists);
-        }
-    });
+    const user = await User.checkUserById(userID);
+    await User.checkAllRolesValid(roles);
+    await User.checkIfRoleExists(user, roles);
     user.roles = user.roles.concat(roles);
     await user.save();
     next(new HttpResponse(statusCode.ok, user));
@@ -126,15 +88,8 @@ export const addUserRoleController = catchAsync(async (req: Request, res: Respon
 export const deleteUserRoleController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userID } = req.params;
     const { roles } = req.body;
-    const user = await User.findById(userID);
-    if (!user) {
-        throw new HttpError(statusCode.badRequest, message.userNotExist);
-    }
-    roles.forEach((role: string) => {
-        if (!user.roles.includes(role)) {
-            throw new HttpError(statusCode.badRequest, message.roleNotExist);
-        }
-    });
+    const user = await User.checkUserById(userID);
+    await User.checkIfRoleExists(user, roles);
     user.roles = user.roles.filter((role: string) => {
         return !roles.includes(role);
     });

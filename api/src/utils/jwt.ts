@@ -1,12 +1,7 @@
 import { sign, verify } from 'jsonwebtoken';
 import { jwtExpiry, JWT_SECRET } from '../config';
 import { logger } from '../logger';
-
-export interface jwtPayloadInterface {
-    userID: string;
-    roles: string[];
-    permissions: string[];
-}
+import { jwtPayloadInterface } from '../models';
 
 export const getJwtToken = async (jwtPayload: jwtPayloadInterface) => {
     return new Promise((resolve, reject) => {
