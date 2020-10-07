@@ -117,7 +117,7 @@ userSchema.statics.checkAllRolesValid = async (roles: string[]): Promise<null> =
     for (let i = 0; i < roles.length; i++) {
         const role = await Role.findOne({ roleName: roles[i] });
         if (!role) {
-            throw new HttpError(statusCode.badRequest, message.roleNotExist);
+            throw new HttpError(statusCode.badRequest, message.roleNotExists);
         }
     }
     return null;
@@ -164,12 +164,7 @@ userSchema.statics.getUserRolesPermissions = async (serviceUserID: string): Prom
 userSchema.pre<UserDocument>('save', async function (next) {
     const user = this;
     if (user.isModified('password')) {
-        hash(user.password, PASSWORD_SALT_ROUNDS, (err: Error, hashPswd: string) => {
-            if (err) {
-                return next(err);
-            }
-            user.password = hashPswd;
-        });
+        user.password = await hash(user.password, +PASSWORD_SALT_ROUNDS);
     }
     next();
 });

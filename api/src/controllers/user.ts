@@ -9,11 +9,20 @@ export const addUserController = catchAsync(async (req: Request, res: Response, 
     const roles = Array.from(new Set(req.body.roles as string[]));
     await User.checkUserByParameter({ userName }, message.userAlreadyExistsName);
     await User.checkUserByParameter({ email }, message.userAlreadyExistsMail);
-    await User.checkUserByParameter({ phoneNumber }, message.userAlreadyExistsPhoneNo);
+    await User.checkUserByParameter({ phoneNumber }, message.userAlreadyExistsPhoneNumber);
     await User.checkUserByParameter({ serviceUserID }, message.userAlreadyExistsID);
     await User.checkUserByParameter({ aadharNumber }, message.userAlreadyExistsAadharNo);
     await User.checkAllRolesValid(roles);
-    const newUser = new User({ userName, email, phoneNumber, password, serviceUserID, serviceName, aadharNumber });
+    const newUser = new User({
+        userName,
+        email,
+        phoneNumber,
+        password,
+        serviceUserID,
+        serviceName,
+        aadharNumber,
+        roles
+    });
     await newUser.save();
     next(new HttpResponse(statusCode.created, { user: newUser }));
 });
