@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { Schema, model } from 'mongoose';
 import { message, statusCode } from '../config';
 import { HttpError } from '../httpError';
@@ -38,7 +39,6 @@ roleSchema.methods.toJSON = function () {
 };
 
 roleSchema.statics.checkRoleById = async (roleID: string): Promise<RoleDocument> => {
-    // eslint-disable-next-line no-use-before-define
     const role = await Role.findById(roleID);
     if (!role) {
         throw new HttpError(statusCode.badRequest, message.roleNotExits);
@@ -47,7 +47,6 @@ roleSchema.statics.checkRoleById = async (roleID: string): Promise<RoleDocument>
 };
 
 roleSchema.statics.getAllRoles = async (skip: number, limit: number): Promise<RoleDocument[]> => {
-    // eslint-disable-next-line no-use-before-define
     const allRoles: RoleDocument[] = await Role.find(
         {},
         {
