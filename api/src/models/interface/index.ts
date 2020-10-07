@@ -16,7 +16,12 @@ export interface RoleDocument extends Document {
     permissions: string[];
 }
 
-export interface RoleModel extends Model<RoleDocument> {}
+export interface RoleModel extends Model<RoleDocument> {
+    checkRoleById(roleID: string): Promise<RoleDocument>;
+    getAllRoles(skip: number, limit: number): Promise<RoleDocument[]>;
+    checkAllPermissionsValid(permissions: string[]): Promise<null>;
+    checkIfPermissionsExists(role: RoleDocument, permissions: string[]): Promise<null>;
+}
 
 export interface UserDocument extends Document {
     employeeName: string;
