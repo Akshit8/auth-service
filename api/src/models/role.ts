@@ -1,10 +1,5 @@
-import { Schema, model, Document } from 'mongoose';
-
-export interface RoleDocument extends Document {
-    roleName: string;
-    description: string;
-    permissions: string[];
-}
+import { Schema, model } from 'mongoose';
+import { RoleDocument, RoleModel } from './interface';
 
 const roleSchema = new Schema(
     {
@@ -39,4 +34,4 @@ roleSchema.methods.toJSON = function () {
     return role;
 };
 
-export const Role = model<RoleDocument>('roles', roleSchema);
+export const Role = model<RoleDocument, RoleModel>('roles', roleSchema);

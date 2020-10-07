@@ -1,22 +1,8 @@
-import { Schema, model, Document, Error, Model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { compare, hash } from 'bcryptjs';
 import { message, PASSWORD_SALT_ROUNDS, statusCode } from '../config';
 import { HttpError } from '../httpError';
-
-export interface UserDocument extends Document {
-    employeeName: string;
-    userName: string;
-    email: string;
-    phoneNumber: string;
-    password: string;
-    serviceUserID: string;
-    aadharNumber: string;
-    roles: string[];
-}
-
-export interface UserModel extends Model<UserDocument> {
-    findByCredentials(username: string, password: string): UserDocument;
-}
+import { UserDocument, UserModel } from './interface';
 
 const userSchema = new Schema(
     {

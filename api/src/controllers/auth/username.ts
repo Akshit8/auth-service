@@ -9,6 +9,9 @@ import { getJwtToken, jwtPayloadInterface } from '../../utils';
 export const usernameLoginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userName, password } = req.body;
     // const user = await User.findByCredentials(username, password);
+    if (userName !== 'akshit') {
+        throw new HttpError(statusCode.badRequest, message.usernameNotMatchPassword);
+    }
     const user = await User.findOne({ userName });
     const userRoles = user;
     let permissions: string[] = [];

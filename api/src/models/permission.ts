@@ -1,9 +1,5 @@
-import { Schema, model, Document } from 'mongoose';
-
-export interface PermissionDocument extends Document {
-    permissionName: string;
-    description: string;
-}
+import { Schema, model } from 'mongoose';
+import { PermissionDocument, PermissionModel } from './interface';
 
 const permissionSchema = new Schema(
     {
@@ -32,4 +28,4 @@ permissionSchema.methods.toJSON = function () {
     return permission;
 };
 
-export const Permission = model<PermissionDocument>('permissions', permissionSchema);
+export const Permission = model<PermissionDocument, PermissionModel>('permissions', permissionSchema);
