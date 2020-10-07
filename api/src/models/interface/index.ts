@@ -24,17 +24,22 @@ export interface RoleModel extends Model<RoleDocument> {
 }
 
 export interface UserDocument extends Document {
-    employeeName: string;
     userName: string;
     email: string;
     phoneNumber: string;
     password: string;
     serviceUserID: string;
+    serviceName: string;
     aadharNumber: string;
     roles: string[];
 }
 
 export interface UserModel extends Model<UserDocument> {
+    checkUserById(userID: string): Promise<UserDocument>;
+    checkUserByParameter(query: { [index: string]: string }, errorMessage: string): Promise<null>;
+    getAllUsers(skip: number, limit: number): Promise<UserDocument[]>;
+    checkAllRolesValid(roles: string[]): Promise<null>;
+    checkIfRoleExists(user: UserDocument, role: string): Promise<null>;
     findByCredentials(username: string, password: string): UserDocument;
 }
 
