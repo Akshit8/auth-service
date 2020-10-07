@@ -1,10 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
-import { message, statusCode } from '../../config';
+import { getTokenExpiry, message, statusCode } from '../../config';
 import { HttpError } from '../../httpError';
 import { HttpResponse } from '../../httpResponse';
 import { catchAsync } from '../../middleware';
 import { LoginSession, User } from '../../models';
 import { sendOtp, verifyOtp, getJwtToken, resendOtp } from '../../utils';
+
+/**
+ *  Passwordless OTP strategy
+ *  uses MSG 91 otp service
+ */
 
 export const otpLoginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userName } = req.body;
@@ -35,9 +40,9 @@ export const otpVerifyController = catchAsync(async (req: Request, res: Response
     }
     const jwtPayload = await User.getUserRolesPermissions(loginUser.userID);
     const token = await getJwtToken(jwtPayload);
-    const tokenExpiry = Date.now() + 12 * 60 * 60 * 1000;
+
     loginUser.token = token as string;
-    loginUser.tokenExpiry = tokenExpiry;
+    loginUser.tokenExpiry = getTokenExpiry();
     loginUser.loggedIn = true;
     await loginUser.save();
     next(new HttpResponse(statusCode.ok, { token }));
