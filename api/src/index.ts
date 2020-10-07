@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { PORT, HOST, MONGO_ATLAS_URI, MONGO_OPTIONS } from './config';
 import { createExpressApp } from './app';
-import { logger } from './logger/winston';
+import { logger } from './logger';
 
 /*
     mongoose client

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { MSG91_AUTH_KEY, MSG91_TEMPLATE_ID, otpExpiry, otpLength } from '../config';
-import { logger } from '../logger/winston';
+import { logger } from '../logger';
 
 const baseUrl = `https://api.msg91.com/api/v5/otp`;
 

@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import { message, statusCode } from '../config';
-import { HttpError } from '../httpError';
-import { HttpResponse } from '../httpResponse';
-import { catchAsync } from '../middleware';
-import { LoginSession, Role, User } from '../models';
-import { sendOtp, verifyOtp, getJwtToken, jwtPayloadInterface, resendOtp } from '../utils';
+import { message, statusCode } from '../../config';
+import { HttpError } from '../../httpError';
+import { HttpResponse } from '../../httpResponse';
+import { catchAsync } from '../../middleware';
+import { LoginSession, Role, User } from '../../models';
+import { sendOtp, verifyOtp, getJwtToken, jwtPayloadInterface, resendOtp } from '../../utils';
 
-export const loginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const otpLoginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userName } = req.body;
     const checkUserName = await LoginSession.findOne({ userName });
     if (checkUserName) {
@@ -56,7 +56,7 @@ export const otpVerifyController = catchAsync(async (req: Request, res: Response
     next(new HttpResponse(statusCode.ok, { token }));
 });
 
-export const resendController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const otpResendController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userName } = req.body;
     const checkLoginSession = await LoginSession.findOne({ userName });
     if (!checkLoginSession) {
@@ -66,12 +66,5 @@ export const resendController = catchAsync(async (req: Request, res: Response, n
     if (response.type !== 'success') {
         throw new HttpError(statusCode.badRequest, response.message);
     }
-    next(new HttpResponse(statusCode.ok, null));
-});
-
-export const logoutController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.header('Authorization');
-    console.log(token);
-    await LoginSession.findOneAndDelete({ token });
     next(new HttpResponse(statusCode.ok, null));
 });

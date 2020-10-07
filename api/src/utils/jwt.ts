@@ -1,6 +1,6 @@
 import { sign, verify } from 'jsonwebtoken';
 import { jwtExpiry, JWT_SECRET } from '../config';
-import { logger } from '../logger/winston';
+import { logger } from '../logger';
 
 export interface jwtPayloadInterface {
     userID: string;
