@@ -25,16 +25,7 @@ export const getPermissionController = catchAsync(async (req: Request, res: Resp
 
 export const getAllPermissionsController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { skip, limit } = req.query;
-    const allPermissions: PermissionDocument[] = await Permission.find(
-        {},
-        {
-            description: false
-        },
-        {
-            skip: +skip!,
-            limit: +limit!
-        }
-    ).sort('createdAt');
+    const allPermissions: PermissionDocument[] = await Permission.getAllPermissions(+skip!, +limit!);
     next(new HttpResponse(statusCode.ok, { permissions: allPermissions }));
 });
 

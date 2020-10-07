@@ -6,7 +6,8 @@ export interface PermissionDocument extends Document {
 }
 
 export interface PermissionModel extends Model<PermissionDocument> {
-    checkPermissionById(permissionID: string): PermissionDocument;
+    checkPermissionById(permissionID: string): Promise<PermissionDocument>;
+    getAllPermissions(skip: number, limit: number): Promise<PermissionDocument[]>;
 }
 
 export interface RoleDocument extends Document {

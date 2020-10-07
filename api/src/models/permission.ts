@@ -30,13 +30,28 @@ permissionSchema.methods.toJSON = function () {
     return permission;
 };
 
-permissionSchema.statics.checkPermissionById = async (permissionID: string) => {
+permissionSchema.statics.checkPermissionById = async (permissionID: string): Promise<PermissionDocument> => {
     // eslint-disable-next-line no-use-before-define
     const permission = await Permission.findById(permissionID);
     if (!permission) {
         throw new HttpError(statusCode.badRequest, message.permissionNotExists);
     }
     return permission;
+};
+
+permissionSchema.statics.getAllPermissions = async (skip: number, limit: number): Promise<PermissionDocument[]> => {
+    // eslint-disable-next-line no-use-before-define
+    const allPermissions: PermissionDocument[] = await Permission.find(
+        {},
+        {
+            description: false
+        },
+        {
+            skip,
+            limit
+        }
+    ).sort('createdAt');
+    return allPermissions;
 };
 
 export const Permission = model<PermissionDocument, PermissionModel>('permissions', permissionSchema);
