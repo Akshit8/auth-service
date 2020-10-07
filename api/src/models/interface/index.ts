@@ -5,7 +5,9 @@ export interface PermissionDocument extends Document {
     description: string;
 }
 
-export interface PermissionModel extends Model<PermissionDocument> {}
+export interface PermissionModel extends Model<PermissionDocument> {
+    checkPermissionById(permissionID: string): PermissionDocument;
+}
 
 export interface RoleDocument extends Document {
     roleName: string;

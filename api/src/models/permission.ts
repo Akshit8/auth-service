@@ -1,4 +1,6 @@
 import { Schema, model } from 'mongoose';
+import { message, statusCode } from '../config';
+import { HttpError } from '../httpError';
 import { PermissionDocument, PermissionModel } from './interface';
 
 const permissionSchema = new Schema(
@@ -25,6 +27,15 @@ permissionSchema.methods.toJSON = function () {
     delete permission.createdAt;
     delete permission.updatedAt;
 
+    return permission;
+};
+
+permissionSchema.statics.checkPermissionById = async (permissionID: string) => {
+    // eslint-disable-next-line no-use-before-define
+    const permission = await Permission.findById(permissionID);
+    if (!permission) {
+        throw new HttpError(statusCode.badRequest, message.permissionNotExists);
+    }
     return permission;
 };
 

@@ -3,7 +3,8 @@ import { message, statusCode } from '../config';
 import { HttpError } from '../httpError';
 import { HttpResponse } from '../httpResponse';
 import { catchAsync } from '../middleware';
-import { Permission, PermissionDocument } from '../models';
+import { Permission } from '../models';
+import { PermissionDocument } from '../models/interface';
 
 export const addPermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { permissionName, description } = req.body;
@@ -18,10 +19,7 @@ export const addPermissionController = catchAsync(async (req: Request, res: Resp
 
 export const getPermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { permissionID } = req.params;
-    const permission = await Permission.findById(permissionID);
-    if (!permission) {
-        throw new HttpError(statusCode.badRequest, message.permissionNotExist);
-    }
+    const permission = await Permission.checkPermissionById(permissionID);
     next(new HttpResponse(statusCode.ok, permission));
 });
 
@@ -44,10 +42,7 @@ export const updatePermissionController = catchAsync(async (req: Request, res: R
 
 export const deletePermissionController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { permissionID } = req.params;
-    const permission = await Permission.findById(permissionID);
-    if (!permission) {
-        throw new HttpError(statusCode.badRequest, message.permissionNotExists);
-    }
+    const permission = await Permission.checkPermissionById(permissionID);
     await permission.remove();
     next(new HttpResponse(statusCode.ok, null));
 });
