@@ -13,3 +13,4 @@ export const logoutController = catchAsync(async (req: Request, res: Response, n
 });
 
 export * from './otp';
+export * from './username';

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { HttpError, HttpErrorHandler } from '../httpError';
 import { HttpResponse, HttpResponseHandler } from '../httpResponse';
 import { message, statusCode } from '../config';
-import { logger } from '../logger/winston';
+import { logger } from '../logger';
 
 const time = Date();
 

@@ -4,7 +4,7 @@ import cors from 'cors';
 import compression from 'compression';
 import morgan from 'morgan';
 import { notFound, responseHandler, healthCheck } from './middleware';
-import { LoggerStream } from './logger/winston';
+import { LoggerStream } from './logger';
 import router from './routes';
 
 export const createExpressApp = () => {

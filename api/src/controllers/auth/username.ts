@@ -7,9 +7,10 @@ import { LoginSession, Role, User } from '../../models';
 import { getJwtToken, jwtPayloadInterface } from '../../utils';
 
 export const usernameLoginController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { username, password } = req.body;
-    const user = await User.findByCredentials(username, password);
-    const userRoles = await User.findOne({ serviceUserID: user.serviceUserID }).select('roles');
+    const { userName, password } = req.body;
+    // const user = await User.findByCredentials(username, password);
+    const user = await User.findOne({ userName });
+    const userRoles = user;
     let permissions: string[] = [];
     // using ! to ignore ts:2533
     for (let i = 0; i < userRoles!.roles.length; i++) {
@@ -17,16 +18,16 @@ export const usernameLoginController = catchAsync(async (req: Request, res: Resp
         permissions = permissions.concat(rolePermission!.permissions);
     }
     const jwtPayload: jwtPayloadInterface = {
-        userID: user.serviceUserID,
+        userID: user!.serviceUserID,
         roles: userRoles!.roles,
         permissions
     };
     const token = await getJwtToken(jwtPayload);
     const tokenExpiry = Date.now() + 12 * 60 * 60 * 1000;
     const newLoginSession = new LoginSession({
-        userID: user.serviceUserID,
-        userName: user.userName,
-        phoneNumber: user.phoneNumber.substr(1)
+        userID: user!.serviceUserID,
+        userName: user!.userName,
+        phoneNumber: user!.phoneNumber.substr(1)
     });
     await newLoginSession.save();
     next(new HttpResponse(statusCode.ok, { token }));
