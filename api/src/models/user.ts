@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose';
 import { compare, hash } from 'bcryptjs';
 import { message, PASSWORD_SALT_ROUNDS, statusCode } from '../config';
 import { HttpError } from '../httpError';
-import { UserDocument, UserModel } from './interface';
+import { jwtPayloadInterface, UserDocument, UserModel } from './interface';
 import { Role } from './role';
 
 const userSchema = new Schema(
@@ -132,16 +132,32 @@ userSchema.statics.checkIfRoleExists = async (user: UserDocument, roles: string[
     return null;
 };
 
-userSchema.statics.findByCredentials = async (username: string, password: string) => {
-    const user = await User.findOne({ username });
+userSchema.statics.findByCredentials = async (userName: string, password: string): Promise<UserDocument> => {
+    const user = await User.findOne({ userName });
     if (!user) {
         throw new HttpError(statusCode.badRequest, message.usernameNotMatchPassword);
     }
-    const isMatch = await compare(user.password, PASSWORD_SALT_ROUNDS);
+    const isMatch = await compare(password, user.password);
     if (!isMatch) {
         throw new HttpError(statusCode.badRequest, message.usernameNotMatchPassword);
     }
     return user;
+};
+
+userSchema.statics.getUserRolesPermissions = async (serviceUserID: string): Promise<jwtPayloadInterface> => {
+    const userRoles = await User.findOne({ serviceUserID }).select('roles');
+    let permissions: string[] = [];
+    // using ! to ignore ts:2533
+    for (let i = 0; i < userRoles!.roles.length; i++) {
+        const rolePermission = await Role.findOne({ roleName: userRoles!.roles[i] }).select('permissions');
+        permissions = permissions.concat(rolePermission!.permissions);
+    }
+    const jwtPayload: jwtPayloadInterface = {
+        userID: serviceUserID,
+        roles: userRoles!.roles,
+        permissions
+    };
+    return jwtPayload;
 };
 
 // hash plain text password before saving

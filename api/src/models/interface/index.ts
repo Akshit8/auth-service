@@ -40,16 +40,26 @@ export interface UserModel extends Model<UserDocument> {
     getAllUsers(skip: number, limit: number): Promise<UserDocument[]>;
     checkAllRolesValid(roles: string[]): Promise<null>;
     checkIfRoleExists(user: UserDocument, role: string): Promise<null>;
-    findByCredentials(username: string, password: string): UserDocument;
+    findByCredentials(userName: string, password: string): Promise<UserDocument>;
+    getUserRolesPermissions(userID: string): Promise<jwtPayloadInterface>;
 }
 
 export interface LoginSessionDocument extends Document {
     userID: string;
     userName: string;
+    email: string;
     phoneNumber: string;
     token: string;
     tokenExpiry: number;
     loggedIn: boolean;
 }
 
-export interface LoginSessionModel extends Model<LoginSessionDocument> {}
+export interface LoginSessionModel extends Model<LoginSessionDocument> {
+    checkUserNameAndDelete(userName: string): Promise<null>;
+}
+
+export interface jwtPayloadInterface {
+    userID: string;
+    roles: string[];
+    permissions: string[];
+}
