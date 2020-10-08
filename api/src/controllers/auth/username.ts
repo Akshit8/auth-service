@@ -17,14 +17,14 @@ export const usernameLoginController = catchAsync(async (req: Request, res: Resp
     const jwtPayload = await User.getUserRolesPermissions(user.serviceUserID);
     const token = await getJwtToken(jwtPayload);
     const newLoginSession = new LoginSession({
-        userID: user!.serviceUserID,
-        userName: user!.userName,
-        email: user!.email,
-        phoneNumber: user!.phoneNumber.substr(1),
+        userID: user.serviceUserID,
+        userName: user.userName,
+        email: user.email,
+        phoneNumber: user.phoneNumber.substr(1),
         token,
         tokenExpiry: getTokenExpiry(),
         loggedIn: true
     });
     await newLoginSession.save();
-    next(new HttpResponse(statusCode.ok, { token }));
+    next(new HttpResponse(statusCode.ok, { token, userID: user.serviceUserID }));
 });

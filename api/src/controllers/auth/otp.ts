@@ -45,7 +45,7 @@ export const otpVerifyController = catchAsync(async (req: Request, res: Response
     loginUser.tokenExpiry = getTokenExpiry();
     loginUser.loggedIn = true;
     await loginUser.save();
-    next(new HttpResponse(statusCode.ok, { token }));
+    next(new HttpResponse(statusCode.ok, { token, userID: loginUser.userID }));
 });
 
 export const otpResendController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
