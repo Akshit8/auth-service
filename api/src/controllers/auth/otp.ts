@@ -21,6 +21,7 @@ export const otpLoginController = catchAsync(async (req: Request, res: Response,
     const newLoginSession = new LoginSession({
         userID: user.serviceUserID,
         userName: user.userName,
+        email: 'sample',
         phoneNumber: user.phoneNumber.substr(1)
     });
     await newLoginSession.save();
