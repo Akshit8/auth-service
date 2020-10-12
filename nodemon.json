@@ -2,5 +2,5 @@
   "watch": ["api"],
   "ext": ".ts,.js",
   "ignore": [],
-  "exec": "export NODE_ENV=development && env-cmd -f ./.env ts-node --project api/tsconfig.json ./api/src/index.ts"
+  "exec": "env-cmd -f ./.env ts-node --project api/tsconfig.json ./api/src/index.ts"
 }
