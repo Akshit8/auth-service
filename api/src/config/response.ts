@@ -12,6 +12,9 @@ export const message: { [index: string]: string } = {
     // app error messages
     notFound: 'Not found',
     serverError: 'Internal server error',
+    // jwt auth
+    invalidToken: 'Token either expired or invalid',
+    validToken: 'Token verified',
     // validator error messages
     invalidParameters: 'Invalid parameters',
     authHeaderRequired: 'Authorization header required',

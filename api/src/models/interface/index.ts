@@ -63,3 +63,9 @@ export interface jwtPayloadInterface {
     roles: string[];
     permissions: string[];
 }
+
+export interface jwtVerifyInterface {
+    status: number;
+    message: string;
+    payload: jwtPayloadInterface | null;
+}
