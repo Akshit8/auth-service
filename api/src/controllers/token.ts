@@ -8,6 +8,9 @@ import { verifyJwtToken } from '../utils';
 
 export const verifyTokenController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const jwtToken = req.header('Authorization');
+    if (!jwtToken) {
+        throw new HttpError(statusCode.badRequest, 'error parsing token');
+    }
     const verifyPayload: jwtVerifyInterface = await verifyJwtToken(jwtToken);
     if (verifyPayload.status === 401) {
         throw new HttpError(verifyPayload.status, verifyPayload.message);
