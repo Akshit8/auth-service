@@ -16,7 +16,7 @@ export const getJwtToken = async (jwtPayload: jwtPayloadInterface) => {
     });
 };
 
-export const verifyJwtToken = async (token: string): Promise<jwtVerifyInterface> => {
+export const verifyJwtToken = async (token: any): Promise<jwtVerifyInterface> => {
     return new Promise((resolve) => {
         verify(token, JWT_SECRET, (err: any, decodedPayload: any) => {
             if (err) {

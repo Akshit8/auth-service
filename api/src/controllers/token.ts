@@ -13,4 +13,4 @@ export const verifyTokenController = catchAsync(async (req: Request, res: Respon
         throw new HttpError(verifyPayload.status, verifyPayload.message);
     }
     throw new HttpResponse(verifyPayload.status, verifyPayload.payload);
-};
+});

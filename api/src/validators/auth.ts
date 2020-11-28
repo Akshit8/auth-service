@@ -1,4 +1,4 @@
-import { body, oneOf } from 'express-validator';
+import { body } from 'express-validator';
 import { message } from '../config';
 
 export const loginAndResendSchema = () => {
